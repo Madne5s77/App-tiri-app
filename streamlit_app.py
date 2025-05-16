@@ -6,7 +6,7 @@ from feedback.dashboard_taratura import aggiorna_modello, mostra_affidabilita
 st.set_page_config(page_title="App Predittiva Tiri Serie A", page_icon="⚽", layout="wide")
 st.title("⚽ App Predittiva Tiri - Serie A")
 
-st.markdown("## 1. Seleziona Partita e Giocatore da Analizzare")
+st.markdown("## 1. Seleziona Partita e Giocatore")
 
 fixtures = get_fixtures_today()
 match_dict = {f"{f['home']} vs {f['away']}": f for f in fixtures}
@@ -14,27 +14,22 @@ selected_match = st.selectbox("Scegli una partita", list(match_dict.keys()))
 fixture_data = match_dict[selected_match]
 fixture_id = fixture_data["fixture_id"]
 
-# Mostra loghi delle squadre
 col1, col2 = st.columns(2)
 with col1:
     st.image(fixture_data["home_logo"], width=100, caption=fixture_data["home"])
 with col2:
     st.image(fixture_data["away_logo"], width=100, caption=fixture_data["away"])
 
-# Filtro per squadra
 selected_team = st.radio("Filtra per squadra", [fixture_data["home"], fixture_data["away"]])
 
 players = get_players_from_fixture(fixture_id)
 filtered_players = [p for p in players if p["team"] == selected_team]
 
-# Ordina per ruolo
 role_order = {"G": 0, "D": 1, "M": 2, "F": 3}
-role_icons = {"G": "🧤", "D": "🛡️", "M": "🎯", "F": "🎯"}
+role_icons = {"G": "🧤", "D": "🛡️", "M": "🎯", "F": "⚽"}
 role_colors = {"G": "blue", "D": "green", "M": "orange", "F": "red"}
-
 filtered_players.sort(key=lambda p: role_order.get(p["position"], 4))
 
-# Visualizzazione con icone e colori
 def format_player(p):
     icon = role_icons.get(p["position"], "")
     color = role_colors.get(p["position"], "black")
@@ -48,9 +43,9 @@ if st.button("Recupera dati reali"):
     stats = get_player_stats(fixture_id, player_id)
     if stats:
         st.success("Dati trovati!")
-        st.write(stats)
+        st.json(stats)
     else:
-        st.error("Dati non trovati o errore API")
+        st.error("Errore nel recupero dei dati da API")
 
 st.markdown("---")
 st.markdown("## 2. Calcola Previsione Algoritmo")

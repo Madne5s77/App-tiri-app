@@ -13,7 +13,6 @@ def get_fixtures_today():
     params = {"date": "2025-05-03", "league": "135", "season": "2024"}
     try:
         res = requests.get(url, headers=headers, params=params)
-        res.raise_for_status()
         data = res.json()["response"]
         return [{
             "fixture_id": f["fixture"]["id"],
@@ -31,7 +30,6 @@ def get_players_from_fixture(fixture_id):
     params = {"fixture": fixture_id}
     try:
         res = requests.get(url, headers=headers, params=params)
-        res.raise_for_status()
         data = res.json()["response"]
         players = []
         for p in data:
